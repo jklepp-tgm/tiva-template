@@ -7,25 +7,35 @@
 #######################################
 # user configuration:
 #######################################
+
 # TARGET: name of the output file
 TARGET = main
+
 # MCU: part number to build for
 MCU = TM4C123GH6PM
+
+# Board to build for
+# directory in $(TIVAWARE_PATH)/examples/boards directory
+BOARD = ek-tm4c123gxl
+
 # OUTDIR: directory to use for output
 OUTDIR = build
+
 # TIVAWARE_PATH: path to tivaware folder
 TIVAWARE_PATH = $(HOME)/opt/tivaware
 
 # SOURCES: list of input source sources
-SOURCEDIR = src/blink
+SOURCEDIR = src
 SOURCES = $(wildcard $(SOURCEDIR)/*.c)
 
-SOURCES += $(TIVAWARE_PATH)/driverlib/gpio.c
-SOURCES += $(TIVAWARE_PATH)/utils/uartstdio.c
-SOURCES += $(TIVAWARE_PATH)/examples/boards/ek-tm4c123gxl/drivers/buttons.c
-
 # INCLUDES: list of includes, by default, use Includes directory
-INCLUDES = -Iinclude -I$(TIVAWARE_PATH)
+INCLUDES =  -I$(SOURCEDIR) \
+			-Iinclude \
+			-I$(TIVAWARE_PATH)
+
+ifdef $(BOARD)
+	INCLUDES += -I$(TIVAWARE_PATH)/examples/boards/$(BOARD)
+endif
 
 # LD_SCRIPT: linker script
 LD_SCRIPT = $(MCU).ld
@@ -80,6 +90,6 @@ debug: clean flash
 	debug/debug_nemiver.sh $(TARGET)
 
 clean:
-	-$(RM) $(OUTDIR)/*
+	-$(RM) $(OUTDIR)
 
 .PHONY: all clean
