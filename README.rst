@@ -10,22 +10,24 @@ Toolchain
 Dependencies:
 ~~~~~~~~~~~~~
 
-* flex
-* bison
-* libgmp3-dev
-* libmpfr-dev
-* libncurses5-dev
-* libmpc-dev
-* autoconf
-* texinfo
-* libftdi-dev
-* python-yaml
-* zlib1g-dev
-* cutecom
-* pkg-config
-* gcc-multilib
+* ``flex``
+* ``bison``
+* ``libgmp3-dev``
+* ``libmpfr-dev``
+* ``libncurses5-dev``
+* ``libmpc-dev``
+* ``autoconf``
+* ``texinfo``
+* ``libftdi-dev``
+* ``python-yaml``
+* ``zlib1g-dev``
+* ``cutecom``
+* ``pkg-config``
+* ``gcc-multilib``
 
 To get all dependencies on Debian:
+
+.. code:: bash
 
     apt-get install flex bison libgmp3-dev libmpfr-dev libncurses5-dev \
     libmpc-dev autoconf texinfo build-essential libftdi-dev python-yaml \
@@ -38,9 +40,12 @@ pre-built for your platform. Extract the package and add the `bin` folder to
 your PATH.
 
 The TivaWare package contains all of the header files and drivers for
-Tiva parts. Grab the file *SW-TM4C-2.0.1.11577.exe* from
-`here <http://software-dl.ti.com/tiva-c/SW-TM4C/latest/index_FDS.html>`_ and unzip it into a directory
-then run `make` to build TivaWare.
+Tiva parts. Grab the file `SW-TM4C-2.1.0.12573.exe 
+<http://software-dl.ti.com/tiva-c/SW-TM4C/latest/index_FDS.html>`_ 
+and unzip it into a directory
+then run ``make`` to build TivaWare.
+
+.. code:: bash
 
     mkdir -p ~/opt/tivaware
     cd ~/opt/tivaware
@@ -55,6 +60,8 @@ Writing and Building Firmware
    `tiva-template <https://github.com/uctools/tiva-template>`_
    repository (or fork it and clone your own repository).
 
+.. code:: bash
+
 	git clone git@github.com:mborko/tiva-template
 
 2. Modify the Makefile:
@@ -64,7 +71,7 @@ Writing and Building Firmware
     * Set TIVAWARE\_PATH to the full path to where you extracted and built
       TivaWare (eg: TIVAWARE_PATH = $(HOME)/opt/tivaware)
 
-3. Run `make`
+3. Run ``make``
 
 4. The output files will be created in the 'build' folder
 
@@ -72,27 +79,53 @@ Writing and Building Firmware
 Flashing
 ========
 
-Add the Launchpad to the udev rules to be able to access it as a non-root user. Edit a rule-file and add the device id:
+Add the Launchpad to the udev rules to be able to access it as a non-root user.
+Edit a rule-file and add the device id:
 
-    vim /etc/udev/rules.d/80-embedded-devices.rules
+.. code:: text
+
+    # /etc/udev/rules.d/80-embedded-devices.rules
+
     # TI Launchpad TM4C123GXL
-    SUBSYSTEM=="usb", ATTRS{idVendor}=="1cbe", ATTRS{idProduct}=="00fd", MODE="0666", SYMLINK+="lm4f", GROUP="dialout"
+    SUBSYSTEM=="usb", 
+    ATTRS{idVendor}=="1cbe", 
+    ATTRS{idProduct}=="00fd", 
+    MODE="0666", 
+    SYMLINK+="lm4f", 
+    GROUP="dialout"
 
-Don't forget to add your user to the defined group in /etc/group. Afterwards you should restart the udev system.
+Don't forget to add your user to the defined group in /etc/group.
+
+.. code:: bash
+    
+    # create dialout group if it doesn't exist.
+    sudo groupadd dialout
+
+    # add yourself to the dialout group
+    sudo usermod -aG dialout $(whoami)
+
+
+Afterwards you should restart the udev system.
 
 The easiest way to flash your device is using lm4flash. First, grab lm4tools
 from Git.
+
+.. code:: bash
 
     cd ~/opt
     git clone https://github.com/utzig/lm4tools.git
 
 Then build lm4flash and run it:
 
+.. code:: bash
+
     cd lm4tools/lm4flash
     make
     lm4flash /path/to/executable.bin
 
 For easier usage add the lm4flash to your PATH variable:
+
+.. code:: bash
 
     export PATH="$HOME/opt/lm4flash:$PATH"
 
